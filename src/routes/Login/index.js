@@ -5,7 +5,7 @@ import './style.css'
 import { withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react/index'
 import Loading2 from '../../components/Loading2'
-import {preloadingImages} from '../../utils/utils'
+import { preloadingImages } from '../../utils/utils'
 import 'animate.css'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
@@ -18,97 +18,112 @@ const imgs = [
   'http://47.99.130.140/imgs/photo.jpg',
 ]
 
-
-
-
-@withRouter @inject('appStore') @observer
+@withRouter
+@inject('appStore')
+@observer
 class Login extends React.Component {
   state = {
-    showBox: 'login',   //展示当前表单
-    url: '',  //背景图片
-    loading:false,
-    loading2:false,
+    showBox: 'login', //展示当前表单
+    url: '', //背景图片
+    loading: false,
+    loading2: false,
   }
 
-  componentDidMount () {
+  componentDidMount() {
+    // const CAS_URL = 'http://10.170.130.240:30115'
+    // const APPID = '5a390af48810f7472536c14dd0567ca2'
+    // const URL = window.location.origin
+    // window.location.href = `${CAS_URL}/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`
+
     const isLogin = this.props.appStore
-    if(isLogin){
-      this.props.history.go(1)     //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
+    if (isLogin) {
+      this.props.history.go(1) //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
       // this.props.appStore.toggleLogin(false) //也可以设置退出登录
     }
     this.initPage()
-    preloadingImages(imgs)  //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
+    preloadingImages(imgs) //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.particle && this.particle.destory()
     notification.destroy()
   }
   //载入页面时的一些处理
   initPage = () => {
     this.setState({
-      loading:true
+      loading: true,
     })
     this.props.appStore.initUsers()
-    this.loadImageAsync(url).then(url=>{
-      this.setState({
-        loading:false,
-        url
+    this.loadImageAsync(url)
+      .then(url => {
+        this.setState({
+          loading: false,
+          url,
+        })
       })
-    }).then(()=>{
-      //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
-      this.particle = new BGParticle('backgroundBox')
-      this.particle.init()
-      notification.open({
-        message:<ul><li>初始账号：admin</li><li>初始密码：admin</li></ul>,
-        duration:0,
-        className:'login-notification'
+      .then(() => {
+        //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
+        this.particle = new BGParticle('backgroundBox')
+        this.particle.init()
+        notification.open({
+          message: (
+            <ul>
+              <li>初始账号：admin</li>
+              <li>初始密码：admin</li>
+            </ul>
+          ),
+          duration: 0,
+          className: 'login-notification',
+        })
       })
-    })
   }
   //切换showbox
-  switchShowBox = (box) => {
+  switchShowBox = box => {
     this.setState({
-      showBox: box
+      showBox: box,
     })
   }
 
   //登录的背景图太大，等载入完后再显示，实际上是图片预加载，
-  loadImageAsync (url) {
+  loadImageAsync(url) {
     return new Promise(function(resolve, reject) {
-      const image = new Image();
+      const image = new Image()
       image.onload = function() {
-        resolve(url);
-      };
+        resolve(url)
+      }
       image.onerror = function() {
         console.log('图片载入错误')
-      };
-      image.src = url;
-    });
+      }
+      image.src = url
+    })
   }
 
-  render () {
-    const {showBox,loading} = this.state
+  render() {
+    const { showBox, loading } = this.state
     return (
-      <div id='login-page'>
-        {
-          loading ?
-            <div>
-              <h3 style={styles.loadingTitle} className='animated bounceInLeft'>载入中...</h3>
-              <Loading2/>
-            </div>:
-            <div>
-              <div id='backgroundBox' style={styles.backgroundBox}/>
-              <div className='container'>
-                <LoginForm
-                  className={showBox === 'login' ? 'box showBox' : 'box hiddenBox'}
-                  switchShowBox={this.switchShowBox}/>
-                <RegisterForm
-                  className={showBox === 'register' ? 'box showBox' : 'box hiddenBox'}
-                  switchShowBox={this.switchShowBox}/>
-              </div>
+      <div id="login-page">
+        {loading ? (
+          <div>
+            <h3 style={styles.loadingTitle} className="animated bounceInLeft">
+              载入中...
+            </h3>
+            <Loading2 />
+          </div>
+        ) : (
+          <div>
+            <div id="backgroundBox" style={styles.backgroundBox} />
+            <div className="container">
+              <LoginForm
+                className={showBox === 'login' ? 'box showBox' : 'box hiddenBox'}
+                switchShowBox={this.switchShowBox}
+              />
+              <RegisterForm
+                className={showBox === 'register' ? 'box showBox' : 'box hiddenBox'}
+                switchShowBox={this.switchShowBox}
+              />
             </div>
-        }
+          </div>
+        )}
       </div>
     )
   }
@@ -123,28 +138,28 @@ const styles = {
     height: '100vh',
     backgroundImage: `url(${url})`,
     backgroundSize: 'cover',
-    transition:'all .5s'
+    transition: 'all .5s',
   },
   focus: {
     // transform: 'scale(0.7)',
     width: '20px',
-    opacity: 1
+    opacity: 1,
   },
-  loadingBox:{
-    position:'fixed',
-    top:'50%',
-    left:'50%',
-    transform:'translate(-50%,-50%)'
+  loadingBox: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%,-50%)',
   },
-  loadingTitle:{
-    position:'fixed',
-    top:'50%',
-    left:'50%',
+  loadingTitle: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
     marginLeft: -45,
     marginTop: -18,
-    color:'#000',
-    fontWeight:500,
-    fontSize:24
+    color: '#000',
+    fontWeight: 500,
+    fontSize: 24,
   },
 }
 

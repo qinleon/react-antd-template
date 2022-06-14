@@ -1,0 +1,6 @@
+.right-product {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
