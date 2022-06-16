@@ -1,4 +1,7 @@
-.right-product {
+.left-group {
+  width: 300px;
+}
+.product-checkbox-group {
   display: grid;
   grid-template-columns: repeat(4, auto);
   cursor: pointer;

@@ -1,5 +1,5 @@
-import React from 'react'
-import CustomMenu from '../CustomMenu/index'
+import React from 'react';
+import CustomMenu from '../CustomMenu/index';
 
 const menus = [
   {
@@ -89,11 +89,11 @@ const menus = [
     icon: 'bulb',
     key: '/home/authManage',
     subs: [
-      { key: '/home/authManage/productClass', title: '产品分类管理', icon: '' },
+      { key: '/home/authManage/productManage', title: '产品分类管理', icon: '' },
       { key: '/home/authManage/roleManage', title: '角色管理', icon: '' },
     ],
   },
-]
+];
 
 class SiderNav extends React.Component {
   render() {
@@ -101,8 +101,8 @@ class SiderNav extends React.Component {
       <div>
         <CustomMenu menus={menus} />
       </div>
-    )
+    );
   }
 }
 
-export default SiderNav
+export default SiderNav;

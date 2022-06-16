@@ -1,9 +1,9 @@
-import React from 'react'
-import { Icon, Badge, Dropdown, Menu, Modal } from 'antd'
-import screenfull from 'screenfull'
-import { inject, observer } from 'mobx-react'
-import { Link, withRouter } from 'react-router-dom'
-import { isAuthenticated } from '../../utils/Session'
+import React from 'react';
+import { Icon, Badge, Dropdown, Menu, Modal } from 'antd';
+import screenfull from 'screenfull';
+import { inject, observer } from 'mobx-react';
+import { Link, withRouter } from 'react-router-dom';
+import { isAuthenticated } from '../../utils/Session';
 
 //withRouter一定要写在前面，不然路由变化不会反映到props中去
 @withRouter
@@ -15,36 +15,36 @@ class HeaderBar extends React.Component {
     count: 100,
     visible: false,
     avatar: require('./img/04.jpg'),
-  }
+  };
 
   componentDidMount() {
     screenfull.onchange(() => {
       this.setState({
         icon: screenfull.isFullscreen ? 'shrink' : 'arrows-alt',
-      })
-    })
+      });
+    });
   }
 
   componentWillUnmount() {
-    screenfull.off('change')
+    screenfull.off('change');
   }
 
   toggle = () => {
-    this.props.onToggle()
-  }
+    this.props.onToggle();
+  };
   screenfullToggle = () => {
     if (screenfull.enabled) {
-      screenfull.toggle()
+      screenfull.toggle();
     }
-  }
+  };
   logout = () => {
-    this.props.appStore.toggleLogin(false)
-    this.props.history.push(this.props.location.pathname)
-  }
+    this.props.appStore.toggleLogin(false);
+    this.props.history.push(this.props.location.pathname);
+  };
 
   render() {
-    const { icon, count, visible, avatar } = this.state
-    const { appStore, collapsed, location } = this.props
+    const { icon, count, visible, avatar } = this.state;
+    const { appStore, collapsed, location } = this.props;
     const notLogin = (
       <div>
         <Link to={{ pathname: '/login', state: { from: location } }} style={{ color: 'rgba(0, 0, 0, 0.65)' }}>
@@ -53,7 +53,7 @@ class HeaderBar extends React.Component {
         &nbsp;
         <img src={require('../../assets/img/defaultUser.jpg')} alt="" />
       </div>
-    )
+    );
     const menu = (
       <Menu className="menu">
         <Menu.ItemGroup title="用户中心" className="menu-group">
@@ -68,14 +68,14 @@ class HeaderBar extends React.Component {
           <Menu.Item>系统设置</Menu.Item>
         </Menu.ItemGroup>
       </Menu>
-    )
+    );
     const login = (
       <Dropdown overlay={menu}>
         <img onClick={() => this.setState({ visible: true })} src={avatar} alt="" />
       </Dropdown>
-    )
+    );
     return (
-      <div id="headerbar" className="flex-between" style={{ height: '48px' }}>
+      <div id="headerbar" className="" style={{ height: '48px' }}>
         {this.props.children}
         <div style={{ lineHeight: '48px' }}>
           <ul className="header-ul">
@@ -100,8 +100,8 @@ class HeaderBar extends React.Component {
           <img src={avatar} alt="" width="100%" />
         </Modal>
       </div>
-    )
+    );
   }
 }
 
-export default HeaderBar
+export default HeaderBar;

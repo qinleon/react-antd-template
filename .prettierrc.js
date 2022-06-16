@@ -4,7 +4,7 @@
  * @Author: Qleo
  * @Date: 2022-04-14 15:28:47
  * @LastEditors: Qleo
- * @LastEditTime: 2022-06-14 17:23:17
+ * @LastEditTime: 2022-06-16 10:32:39
  */
 module.exports = {
   // 字符串使用单引号
@@ -12,7 +12,7 @@ module.exports = {
   // 在jsx中把'>' 是否单独放同一行，true同一行，false单独一行，默认false
   jsxBracketSameLine: false,
   // 每行末尾自动添加分号
-  semi: false,
+  semi: true,
   // tab缩进大小,默认为2
   tabWidth: 2,
   // 使用tab缩进，默认false

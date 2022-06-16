@@ -53,15 +53,6 @@ module.exports = {
   devServer: {
     inline: true,
     port: 3000,
-    proxy: {
-      '/api': {
-        target: 'https://10.170.130.181:35002',
-        pathRewrite: { '^/api': '/prod-api' },
-        secure: true,
-        changeOrigin: true,
-        logLevel: 'debug',
-      },
-    },
   },
   output: {
     // Add /* filename */ comments to generated require()s in the output.

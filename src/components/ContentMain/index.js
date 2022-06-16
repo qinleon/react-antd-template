@@ -45,7 +45,7 @@ const About = LoadableComponent(() => import('../../routes/About/index'))
 
 //权限管理
 const RoleManage = LoadableComponent(() => import('../../routes/AuthManage/RoleManage/RoleManage'))
-const ProductClass = LoadableComponent(() => import('../../routes/AuthManage/ProductClass/ProductClass'))
+const ProductManage = LoadableComponent(() => import('../../routes/AuthManage/ProductManage/ProductManage'))
 
 @withRouter
 class ContentMain extends React.Component {
@@ -87,7 +87,7 @@ class ContentMain extends React.Component {
           <PrivateRoute exact path="/home/about" component={About} />
 
           <PrivateRoute exact path="/home/authManage/roleManage" component={RoleManage} />
-          <PrivateRoute exact path="/home/authManage/productClass" component={ProductClass} />
+          <PrivateRoute exact path="/home/authManage/ProductManage" component={ProductManage} />
 
           <Redirect exact from="/" to="/home" />
         </Switch>
