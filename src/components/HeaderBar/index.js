@@ -75,7 +75,7 @@ class HeaderBar extends React.Component {
       </Dropdown>
     );
     return (
-      <div id="headerbar" className="" style={{ height: '48px' }}>
+      <div id="headerbar" className="flex-between" style={{ height: '48px' }}>
         {this.props.children}
         <div style={{ lineHeight: '48px' }}>
           <ul className="header-ul">

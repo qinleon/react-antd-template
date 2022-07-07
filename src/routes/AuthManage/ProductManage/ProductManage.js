@@ -4,7 +4,7 @@
  * @Author: Qleo
  * @Date: 2022-06-01 16:03:10
  * @LastEditors: Qleo
- * @LastEditTime: 2022-06-16 10:33:32
+ * @LastEditTime: 2022-07-05 17:12:52
  */
 import React from 'react';
 import './ProductManage.scss';
@@ -94,17 +94,47 @@ export default class ProductClass extends React.Component {
     this.getProductList();
     this.getProductGroupList();
   }
-  getProductList = () => {
-    getProductListAPI().then(({ data }) => {
-      this.setState({
-        productList: data,
-      });
-    });
-  };
+  // 获取分组
   getProductGroupList = () => {
     getProductGroupListAPI({ number: 0, size: 99999 }).then(({ data }) => {
       this.setState({
         groupList: data.content,
+      });
+    });
+  };
+  // 左侧点击分组
+  clickGroup(item) {
+    const that = this;
+    const nextFn = () => {
+      that.activeGroup = item;
+      const listData = item.list;
+      that.checkedProductCodes = [];
+      that.productList.forEach(j => {
+        listData.forEach(i => {
+          if (i.productCode === j.productCode) {
+            // j.checked = true
+            that.checkedProductCodes.push(i.productCode);
+          }
+        });
+      });
+      that.isEdited = false;
+      that.keywords = '';
+      that.searchProductCodeList();
+    };
+    if (this.isEdited && this.activeGroup.id !== item.id) {
+      this.$confirm({
+        title: '上次的修改还未保存，放弃修改并跳转吗?',
+        onOk: nextFn,
+      });
+    } else {
+      nextFn();
+    }
+  }
+  // 获取产品列表
+  getProductList = () => {
+    getProductListAPI().then(({ data }) => {
+      this.setState({
+        productList: data,
       });
     });
   };
@@ -132,7 +162,7 @@ export default class ProductClass extends React.Component {
           <div className="group-list">
             {this.state.groupList.map(item => {
               return (
-                <div className="group" key={item.id}>
+                <div className="group" onClick={this.clickGroup} key={item.id}>
                   {item.name}
                 </div>
               );

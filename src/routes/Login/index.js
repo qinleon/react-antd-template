@@ -1,22 +1,22 @@
-import React from 'react'
-import BGParticle from '../../utils/BGParticle'
-import { notification } from 'antd'
-import './style.css'
-import { withRouter } from 'react-router-dom'
-import { inject, observer } from 'mobx-react/index'
-import Loading2 from '../../components/Loading2'
-import { preloadingImages } from '../../utils/utils'
-import 'animate.css'
-import LoginForm from './LoginForm'
-import RegisterForm from './RegisterForm'
+import React from 'react';
+import BGParticle from '../../utils/BGParticle';
+import { notification } from 'antd';
+import './style.css';
+import { withRouter } from 'react-router-dom';
+import { inject, observer } from 'mobx-react/index';
+import Loading2 from '../../components/Loading2';
+import { preloadingImages } from '../../utils/utils';
+import 'animate.css';
+import LoginForm from './LoginForm';
+import RegisterForm from './RegisterForm';
 
-const url = 'http://47.99.130.140/imgs/wallhaven-g83v2e.jpg'
+const url = 'http://47.99.130.140/imgs/wallhaven-g83v2e.jpg';
 const imgs = [
   'http://47.99.130.140/imgs/wallhaven-p8r1e9.jpg',
   'http://47.99.130.140/imgs/wallhaven-e7zyy8.jpg',
   'http://47.99.130.140/imgs/wallhaven-6k9e7q.jpg',
   'http://47.99.130.140/imgs/photo.jpg',
-]
+];
 
 @withRouter
 @inject('appStore')
@@ -27,44 +27,46 @@ class Login extends React.Component {
     url: '', //背景图片
     loading: false,
     loading2: false,
-  }
+  };
 
   componentDidMount() {
-    // const CAS_URL = 'http://10.170.130.240:30115'
-    // const APPID = '5a390af48810f7472536c14dd0567ca2'
-    // const URL = window.location.origin
-    // window.location.href = `${CAS_URL}/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`
+    const APPID = '5a390af48810f7472536c14dd0567ca2';
+    const URL = window.location.origin;
+    const tempUrl = `http://10.170.130.240:30115/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`;
+    const domA = document.createElement('a');
+    domA.setAttribute('href', tempUrl);
+    domA.click();
 
-    const isLogin = this.props.appStore
+    const isLogin = this.props.appStore;
     if (isLogin) {
-      this.props.history.go(1) //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
+      this.props.history.go(1); //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
       // this.props.appStore.toggleLogin(false) //也可以设置退出登录
     }
-    this.initPage()
-    preloadingImages(imgs) //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
+    this.initPage();
+    preloadingImages(imgs); //预加载下一个页面的图片，预加载了第二次为什么还会去请求图片资源？
   }
 
   componentWillUnmount() {
-    this.particle && this.particle.destory()
-    notification.destroy()
+    this.particle && this.particle.destory();
+    notification.destroy();
   }
   //载入页面时的一些处理
   initPage = () => {
     this.setState({
       loading: true,
-    })
-    this.props.appStore.initUsers()
+    });
+    this.props.appStore.initUsers();
     this.loadImageAsync(url)
       .then(url => {
         this.setState({
           loading: false,
           url,
-        })
+        });
       })
       .then(() => {
         //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
-        this.particle = new BGParticle('backgroundBox')
-        this.particle.init()
+        this.particle = new BGParticle('backgroundBox');
+        this.particle.init();
         notification.open({
           message: (
             <ul>
@@ -74,32 +76,32 @@ class Login extends React.Component {
           ),
           duration: 0,
           className: 'login-notification',
-        })
-      })
-  }
+        });
+      });
+  };
   //切换showbox
   switchShowBox = box => {
     this.setState({
       showBox: box,
-    })
-  }
+    });
+  };
 
   //登录的背景图太大，等载入完后再显示，实际上是图片预加载，
   loadImageAsync(url) {
-    return new Promise(function(resolve, reject) {
-      const image = new Image()
-      image.onload = function() {
-        resolve(url)
-      }
-      image.onerror = function() {
-        console.log('图片载入错误')
-      }
-      image.src = url
-    })
+    return new Promise(function (resolve, reject) {
+      const image = new Image();
+      image.onload = function () {
+        resolve(url);
+      };
+      image.onerror = function () {
+        console.log('图片载入错误');
+      };
+      image.src = url;
+    });
   }
 
   render() {
-    const { showBox, loading } = this.state
+    const { showBox, loading } = this.state;
     return (
       <div id="login-page">
         {loading ? (
@@ -125,7 +127,7 @@ class Login extends React.Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }
 
@@ -161,6 +163,6 @@ const styles = {
     fontWeight: 500,
     fontSize: 24,
   },
-}
+};
 
-export default Login
+export default Login;

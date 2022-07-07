@@ -2,15 +2,18 @@ function accMul(arg1, arg2) {
   let m = 0;
   const s1 = arg1.toString();
   const s2 = arg2.toString();
-  m += s1.split(".").length > 1 ? s1.split(".")[1].length : 0;
-  m += s2.split(".").length > 1 ? s2.split(".")[1].length : 0;
-  return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / 10 ** m;
+  m += s1.split('.').length > 1 ? s1.split('.')[1].length : 0;
+  m += s2.split('.').length > 1 ? s2.split('.')[1].length : 0;
+  return (Number(s1.replace('.', '')) * Number(s2.replace('.', ''))) / 10 ** m;
 }
 
 export function digitUppercase(n) {
   const fraction = ['角', '分'];
   const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
-  const unit = [['元', '万', '亿'], ['', '拾', '佰', '仟', '万']];
+  const unit = [
+    ['元', '万', '亿'],
+    ['', '拾', '佰', '仟', '万'],
+  ];
   let num = Math.abs(n);
   let s = '';
   fraction.forEach((item, index) => {
@@ -33,7 +36,6 @@ export function digitUppercase(n) {
     .replace(/^整$/, '零元整');
 }
 
-
 /**
  * 生成指定区间的随机整数
  * @param min
@@ -49,8 +51,8 @@ export function randomNum(min, max) {
  * @param str
  * @returns {number}
  */
-export function calculateWidth(arr){
-  return 30 + arr[0].length*15
+export function calculateWidth(arr) {
+  return 30 + arr[0].length * 15;
 }
 
 /**
@@ -59,8 +61,30 @@ export function calculateWidth(arr){
  * @constructor
  */
 export function preloadingImages(arr) {
-  arr.forEach(item=>{
-    const img = new Image()
-    img.src = item
-  })
+  arr.forEach(item => {
+    const img = new Image();
+    img.src = item;
+  });
+}
+
+/**
+ * @param {string} url
+ * @returns {Object}
+ */
+export function param2Obj(url) {
+  const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ');
+  if (!search) {
+    return {};
+  }
+  const obj = {};
+  const searchArr = search.split('&');
+  searchArr.forEach(v => {
+    const index = v.indexOf('=');
+    if (index !== -1) {
+      const name = v.substring(0, index);
+      const val = v.substring(index + 1, v.length);
+      obj[name] = val;
+    }
+  });
+  return obj;
 }
