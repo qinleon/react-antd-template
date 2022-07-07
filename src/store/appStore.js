@@ -1,7 +1,6 @@
 import { observable, action } from 'mobx';
 import { isAuthenticated, authenticateSuccess, logout } from '../utils/Session';
 import { loginAPI } from '../api/login';
-
 class AppStore {
   @observable isLogin = !!isAuthenticated(); //利用cookie来判断用户是否登录，避免刷新页面后登录状态丢失
   @observable users = []; //模拟用户数据库
@@ -16,6 +15,8 @@ class AppStore {
           this.toggleLogin(true, data);
         })
         .catch(error => {
+          this.toggleLogin(false);
+          window.location.href = '/login';
           reject(error);
         });
     });

@@ -4,7 +4,7 @@ import { isAuthenticated } from '@src/utils/Session';
 
 // create an axios instance
 const request = axios.create({
-  baseURL: '', // url = base url + request url
+  baseURL: '/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 60000, // request timeout
 });

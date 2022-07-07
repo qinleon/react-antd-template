@@ -9,6 +9,7 @@ import { preloadingImages } from '../../utils/utils';
 import 'animate.css';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import { param2Obj } from '@src/utils/utils.js';
 
 const url = 'http://47.99.130.140/imgs/wallhaven-g83v2e.jpg';
 const imgs = [
@@ -30,12 +31,19 @@ class Login extends React.Component {
   };
 
   componentDidMount() {
-    const APPID = '5a390af48810f7472536c14dd0567ca2';
-    const URL = window.location.origin;
-    const tempUrl = `http://10.170.130.240:30115/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`;
-    const domA = document.createElement('a');
-    domA.setAttribute('href', tempUrl);
-    domA.click();
+    const url = window.location.href;
+    const urlObj = param2Obj(url);
+    const { code } = urlObj;
+    if (code) {
+      this.props.appStore.actionLogin({ code }); //也可以设置退出登录
+    } else {
+      const APPID = '5a390af48810f7472536c14dd0567ca2';
+      const URL = window.location.origin;
+      const tempUrl = `http://10.170.130.240:30115/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`;
+      const domA = document.createElement('a');
+      domA.setAttribute('href', tempUrl);
+      domA.click();
+    }
 
     const isLogin = this.props.appStore;
     if (isLogin) {

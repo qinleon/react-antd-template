@@ -4,7 +4,7 @@
  * @Author: Qleo
  * @Date: 2022-06-01 16:03:10
  * @LastEditors: Qleo
- * @LastEditTime: 2022-07-05 17:12:52
+ * @LastEditTime: 2022-07-07 16:18:53
  */
 import React from 'react';
 import './ProductManage.scss';
@@ -88,6 +88,8 @@ export default class ProductClass extends React.Component {
       checkedList: [],
       indeterminate: false,
       checkAll: false,
+      isEdited: false,
+      keywords: '',
     };
   }
   componentDidMount() {
@@ -103,25 +105,19 @@ export default class ProductClass extends React.Component {
     });
   };
   // 左侧点击分组
-  clickGroup(item) {
+  clickGroup = item => {
+    console.log(item);
     const that = this;
     const nextFn = () => {
       that.activeGroup = item;
-      const listData = item.list;
-      that.checkedProductCodes = [];
-      that.productList.forEach(j => {
-        listData.forEach(i => {
-          if (i.productCode === j.productCode) {
-            // j.checked = true
-            that.checkedProductCodes.push(i.productCode);
-          }
-        });
+      that.setState({
+        checkedProductCodes: item.list.map(item.productCode),
+        isEdited: false,
+        keywords: '',
       });
-      that.isEdited = false;
-      that.keywords = '';
       that.searchProductCodeList();
     };
-    if (this.isEdited && this.activeGroup.id !== item.id) {
+    if (this.state.isEdited && this.state.activeGroup.id !== item.id) {
       this.$confirm({
         title: '上次的修改还未保存，放弃修改并跳转吗?',
         onOk: nextFn,
@@ -129,7 +125,7 @@ export default class ProductClass extends React.Component {
     } else {
       nextFn();
     }
-  }
+  };
   // 获取产品列表
   getProductList = () => {
     getProductListAPI().then(({ data }) => {
@@ -156,20 +152,20 @@ export default class ProductClass extends React.Component {
   };
   render() {
     return (
-      <div className="flex">
-        <div className="left-group">
+      <div className="productManage flex">
+        <div className="left-group product-left">
           <Button>添加</Button>&emsp;
           <div className="group-list">
             {this.state.groupList.map(item => {
               return (
-                <div className="group" onClick={this.clickGroup} key={item.id}>
+                <div className="group" onClick={this.clickGroup(item)} key={item.id}>
                   {item.name}
                 </div>
               );
             })}
           </div>
         </div>
-        <div className="right-product flex-1">
+        <div className="right-product product-right flex-1">
           <Checkbox
             indeterminate={this.state.indeterminate}
             onChange={this.onCheckAllChange}
