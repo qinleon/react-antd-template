@@ -72,11 +72,12 @@ export function preloadingImages(arr) {
  * @returns {Object}
  */
 export function param2Obj(url) {
-  const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ');
+  const search = decodeURIComponent(url.match(/(?<=\?)[^#]*/)).replace(/\+/g, ' ');
   if (!search) {
     return {};
   }
   const obj = {};
+  console.log(search);
   const searchArr = search.split('&');
   searchArr.forEach(v => {
     const index = v.indexOf('=');

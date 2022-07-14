@@ -15,8 +15,8 @@ class AppStore {
           this.toggleLogin(true, data);
         })
         .catch(error => {
-          this.toggleLogin(false);
-          window.location.href = '/login';
+          // this.toggleLogin(false);
+          // window.location.href = '/login';
           reject(error);
         });
     });

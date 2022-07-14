@@ -8,7 +8,6 @@ import './App.css';
 import './assets/font/iconfont.css';
 class App extends Component {
   render() {
-    console.log(window.location);
     return (
       <Switch>
         <Route path="/login" component={Login} />

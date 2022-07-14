@@ -4,21 +4,22 @@
  * @Author: Qleo
  * @Date: 2022-06-01 16:03:10
  * @LastEditors: Qleo
- * @LastEditTime: 2022-07-07 16:18:53
+ * @LastEditTime: 2022-07-13 15:36:52
  */
 import React from 'react';
 import './ProductManage.scss';
-import { Button } from 'antd';
 import { getProductListAPI, getProductGroupListAPI } from '@src/api/auth/productClassAPI.js';
+import _debounce from 'lodash.debounce';
 
-import { Checkbox } from 'antd';
-const CheckboxGroup = Checkbox.Group;
+import { Button, Modal, Checkbox } from 'antd';
+import AddProductGroupModal from './AddProductGroupModal.js';
 
-export default class ProductClass extends React.Component {
+export default class ProductManageClass extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       groupList: [],
+      activeGroup: {},
       productList: [
         {
           id: 21,
@@ -85,11 +86,13 @@ export default class ProductClass extends React.Component {
           sortNo: 100004,
         },
       ],
-      checkedList: [],
+      filterProductCodeList: [],
+      checkedProductCodes: [],
       indeterminate: false,
       checkAll: false,
       isEdited: false,
       keywords: '',
+      modalVisible: false,
     };
   }
   componentDidMount() {
@@ -106,19 +109,19 @@ export default class ProductClass extends React.Component {
   };
   // 左侧点击分组
   clickGroup = item => {
-    console.log(item);
     const that = this;
     const nextFn = () => {
-      that.activeGroup = item;
       that.setState({
-        checkedProductCodes: item.list.map(item.productCode),
+        activeGroup: item,
+        checkedProductCodes: item.list.map(item => item.productCode),
         isEdited: false,
         keywords: '',
       });
       that.searchProductCodeList();
     };
     if (this.state.isEdited && this.state.activeGroup.id !== item.id) {
-      this.$confirm({
+      const { confirm } = Modal;
+      confirm({
         title: '上次的修改还未保存，放弃修改并跳转吗?',
         onOk: nextFn,
       });
@@ -126,39 +129,101 @@ export default class ProductClass extends React.Component {
       nextFn();
     }
   };
+
   // 获取产品列表
   getProductList = () => {
     getProductListAPI().then(({ data }) => {
       this.setState({
         productList: data,
+        filterProductCodeList: data.map(item => item.productCode),
       });
     });
   };
-  // 单选
-  onChange = checkedList => {
-    this.setState(state => ({
-      checkedList,
-      indeterminate: !!checkedList.length && checkedList.length < state.productList.length,
-      checkAll: checkedList.length === state.productList.length,
-    }));
-  };
   // 全选
   onCheckAllChange = e => {
-    this.setState(state => ({
-      checkedList: e.target.checked ? state.productList.map(item => item.productCode) : [],
+    let checkedList = [];
+    if (e.target.checked) {
+      checkedList = [...new Set(this.state.checkedProductCodes.concat(this.state.filterProductCodeList))];
+    } else {
+      checkedList = this.state.checkedProductCodes.filter(item => {
+        return !this.state.filterProductCodeList.includes(item);
+      });
+    }
+    this.setState({
+      checkedProductCodes: checkedList,
       indeterminate: false,
       checkAll: e.target.checked,
-    }));
+    });
+  };
+  // 右侧公司点击
+  clickProduct = item => {
+    this.setState({
+      isEdited: true,
+    });
+    if (!this.state.checkedProductCodes.includes(item.productCode)) {
+      this.setState({
+        checkedProductCodes: [...this.state.checkedProductCodes, item.productCode],
+      });
+    } else {
+      this.state.checkedProductCodes.forEach((i, index) => {
+        if (i === item.productCode) {
+          this.state.checkedProductCodes.splice(index, 1);
+          this.setState({
+            checkedProductCodes: this.state.checkedProductCodes,
+          });
+        }
+      });
+    }
+    this.judgeCheckAll();
+  };
+  // 模糊搜索产品
+  searchProductCodeList = _debounce(() => {
+    const value = this.keywords;
+    this.setState({
+      filterProductCodeList: this.state.productList
+        .filter(item => {
+          return item.productName.includes(value);
+        })
+        .map(item => item.productCode),
+    });
+    this.judgeCheckAll();
+  }, 500);
+  // 判断全选、半选状态
+  judgeCheckAll = () => {
+    // 过滤后的可见数据中选中的长度
+    let viewCheckedLength = 0;
+    if (this.state.checkedProductCodes.length) {
+      viewCheckedLength = this.state.checkedProductCodes.filter(code => {
+        return this.state.filterProductCodeList.includes(code);
+      }).length;
+    }
+    this.setState({
+      indeterminate: !!viewCheckedLength && viewCheckedLength < this.state.filterProductCodeList.length,
+      checkAll: !!viewCheckedLength && viewCheckedLength === this.state.filterProductCodeList.length,
+    });
+  };
+  showModal = () => {
+    this.setState({
+      modalVisible: true,
+    });
   };
   render() {
     return (
       <div className="productManage flex">
         <div className="left-group product-left">
-          <Button>添加</Button>&emsp;
+          <Button type="primary" onClick={this.showModal}>
+            添加
+          </Button>
           <div className="group-list">
             {this.state.groupList.map(item => {
               return (
-                <div className="group" onClick={this.clickGroup(item)} key={item.id}>
+                <div
+                  className={`group-item ${this.state.activeGroup.id === item.id ? 'active' : ''}`}
+                  onClick={() => {
+                    this.clickGroup(item);
+                  }}
+                  key={item.id}
+                >
                   {item.name}
                 </div>
               );
@@ -173,20 +238,29 @@ export default class ProductClass extends React.Component {
           >
             Check all
           </Checkbox>
-          <CheckboxGroup className="product-checkbox-group" value={this.state.checkedList} onChange={this.onChange}>
+          <div className="product-checkbox-group" value={this.state.checkedList}>
             {this.state.productList.map(item => {
               if (item.productName !== '') {
                 return (
                   <div className="product" key={item.productCode}>
-                    <Checkbox value={item.productCode}>{item.productName}</Checkbox>
+                    <Checkbox
+                      value={item.productCode}
+                      checked={this.state.checkedProductCodes.includes(item.productCode)}
+                      onClick={() => {
+                        this.clickProduct(item);
+                      }}
+                    >
+                      {item.productName}
+                    </Checkbox>
                   </div>
                 );
               } else {
                 return '';
               }
             })}
-          </CheckboxGroup>
+          </div>
         </div>
+        <AddProductGroupModal visible={this.state.modalVisible}></AddProductGroupModal>
       </div>
     );
   }

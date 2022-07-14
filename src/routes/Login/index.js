@@ -35,10 +35,12 @@ class Login extends React.Component {
     const urlObj = param2Obj(url);
     const { code } = urlObj;
     if (code) {
+      console.log(1);
       this.props.appStore.actionLogin({ code }); //也可以设置退出登录
     } else {
       const APPID = '5a390af48810f7472536c14dd0567ca2';
       const URL = window.location.origin;
+      console.log(URL);
       const tempUrl = `http://10.170.130.240:30115/cas/oauth2.0/authorize?response_type=code&bypass_approval_prompt=true&client_id=${APPID}&redirect_uri=${URL}`;
       const domA = document.createElement('a');
       domA.setAttribute('href', tempUrl);

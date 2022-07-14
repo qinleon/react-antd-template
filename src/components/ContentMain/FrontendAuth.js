@@ -4,7 +4,7 @@
  * @Author: Qleo
  * @Date: 2022-07-05 14:57:18
  * @LastEditors: Qleo
- * @LastEditTime: 2022-07-07 17:44:58
+ * @LastEditTime: 2022-07-12 15:34:47
  */
 /**
  * 路由守卫校验
@@ -23,9 +23,6 @@ class FrontendAuth extends Component {
     const { routerConfig, location } = this.props;
     const { pathname } = location;
     const isLogin = !!isAuthenticated();
-    console.log(pathname, isLogin);
-    console.log(location);
-    debugger;
     // 如果该路由不用进行权限校验，登录状态下登陆页除外
     // 因为登陆后，无法跳转到登陆页
     // 这部分代码，是为了在非登陆状态下，访问不需要权限校验的路由
